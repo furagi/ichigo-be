@@ -20,3 +20,7 @@ type User {
 type Query {
   user(uuid: ID!): User!
 }
+
+type Mutation {
+  redeemReward(date: Date!, userUuid: ID!): UserReward!
+}

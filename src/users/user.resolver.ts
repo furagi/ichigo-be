@@ -1,6 +1,7 @@
 import {
   Args,
   ID,
+  Mutation,
   Parent,
   Query,
   ResolveField,
@@ -24,5 +25,18 @@ export class UsersResolver {
     const { uuid } = user;
     console.log(`resolve user ${uuid} rewards for date ${date}`);
     return [];
+  }
+
+  @Mutation(() => UserReward)
+  async redeemReward(
+    @Args('date') date: Date,
+    @Args('userUuid', { type: () => ID }) uuid: string,
+  ) {
+    console.log(`User ${uuid} redeemed reward ${date}`);
+    return {
+      availableAt: date,
+      redeemedAt: new Date(),
+      expiresAt: new Date(),
+    };
   }
 }

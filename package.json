@@ -24,15 +24,19 @@
     "@apollo/gateway": "^2.0.1",
     "@nestjs/apollo": "^10.0.9",
     "@nestjs/common": "^7.6.15",
+    "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^7.6.15",
     "@nestjs/graphql": "^10.0.10",
     "@nestjs/platform-express": "^7.6.15",
+    "@nestjs/typeorm": "^8.0.3",
     "apollo-server-express": "^3.6.7",
     "graphql": "^16.3.0",
+    "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.6",
-    "ts-morph": "^14.0.0"
+    "rxjs": "^7.5.5",
+    "ts-morph": "^14.0.0",
+    "typeorm": "^0.3.6"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
