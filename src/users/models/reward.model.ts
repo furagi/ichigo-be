@@ -1,16 +1,16 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Reward {
-  @Field(() => Int)
-  id: number;
+  @Field(() => ID)
+  uuid: string;
 
   @Field()
-  availableAt: string;
+  availableAt: Date;
 
   @Field({ nullable: true })
-  redeemedAt?: string;
+  redeemedAt?: Date;
 
   @Field({ nullable: true })
-  expiresAt: string;
+  expiresAt?: Date;
 }
