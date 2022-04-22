@@ -9,8 +9,5 @@ export class Reward {
   availableAt: Date;
 
   @Field({ nullable: true })
-  redeemedAt?: Date;
-
-  @Field({ nullable: true })
   expiresAt?: Date;
 }
