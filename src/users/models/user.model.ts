@@ -6,6 +6,5 @@ export class User {
   @Field(() => ID)
   uuid: string;
 
-  @Field(() => [UserReward])
   rewards: UserReward[];
 }

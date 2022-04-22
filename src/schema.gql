@@ -1,0 +1,22 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserReward {
+  uuid: ID!
+  availableAt: Date!
+  expiresAt: Date
+  redeemedAt: Date
+}
+
+"""Date"""
+scalar Date
+
+type User {
+  uuid: ID!
+  rewards(date: Date): [UserReward!]!
+}
+
+type Query {
+  user(uuid: ID!): User!
+}

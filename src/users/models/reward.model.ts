@@ -5,9 +5,6 @@ export class Reward {
   @Field(() => ID)
   uuid: string;
 
-  @Field()
   availableAt: Date;
-
-  @Field({ nullable: true })
   expiresAt?: Date;
 }
