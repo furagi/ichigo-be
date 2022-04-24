@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
-import { UsersModule } from './users/users.module';
+import { RewardsModule } from './rewards/rewards.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
@@ -29,7 +29,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
     }),
 
-    UsersModule,
+    RewardsModule,
   ],
   controllers: [],
   providers: [],

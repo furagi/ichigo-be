@@ -4,6 +4,8 @@ const tableName = 'rewards';
 
 export class CreateRewards1650642226577 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
+
     await queryRunner.createTable(
       new Table({
         name: tableName,
@@ -17,13 +19,13 @@ export class CreateRewards1650642226577 implements MigrationInterface {
             default: `uuid_generate_v4()`,
           },
           {
-            name: 'availableAt',
+            name: 'available_at',
             type: 'date',
             default: 'now()',
             isUnique: true,
           },
           {
-            name: 'expiresAt',
+            name: 'expires_at',
             type: 'date',
             default: `now() + INTERVAL '7 DAY'`,
             isUnique: true,
@@ -32,7 +34,7 @@ export class CreateRewards1650642226577 implements MigrationInterface {
         indices: [
           {
             name: 'IDX_START_END_DATE',
-            columnNames: ['availableAt', 'expiresAt'],
+            columnNames: ['available_at', 'expires_at'],
           },
         ],
       }),
@@ -42,5 +44,6 @@ export class CreateRewards1650642226577 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     return queryRunner.dropTable(tableName, true, true, true);
+    return queryRunner.query(`DROP EXTENSION "uuid-ossp"`);
   }
 }

@@ -5,10 +5,10 @@ import { UserReward } from './user-reward.entity';
  * In real world scenario I wouldn't create User entity (so users should be stored in another service)
  * But I think create two services for a so small task is way too much, so.
  */
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
-  uuid: number;
+  id: number;
 
   @Column()
   name: string;

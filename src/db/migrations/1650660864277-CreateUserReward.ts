@@ -3,11 +3,9 @@ import {
   QueryRunner,
   Table,
   TableForeignKey,
-  TableIndex,
-  TableUnique,
 } from 'typeorm';
 
-const tableName = 'usersRewards';
+const tableName = 'users_rewards';
 
 export class CreateUserReward1650660864277 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -16,17 +14,17 @@ export class CreateUserReward1650660864277 implements MigrationInterface {
         name: tableName,
         columns: [
           {
-            name: 'redeemedAt',
+            name: 'redeemed_at',
             type: 'date',
             default: 'now()',
             isUnique: true,
           },
           {
-            name: 'userUuid',
-            type: 'uuid',
+            name: 'user_id',
+            type: 'int',
           },
           {
-            name: 'rewardUuid',
+            name: 'reward_uuid',
             type: 'uuid',
           },
         ],
@@ -36,22 +34,22 @@ export class CreateUserReward1650660864277 implements MigrationInterface {
     await queryRunner.createForeignKey(
       tableName,
       new TableForeignKey({
-        columnNames: ['userUuid'],
-        referencedColumnNames: ['uuid'],
+        columnNames: ['user_id'],
+        referencedColumnNames: ['id'],
         referencedTableName: 'users',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
     await queryRunner.createForeignKey(
       tableName,
       new TableForeignKey({
-        columnNames: ['rewardUuid'],
+        columnNames: ['reward_uuid'],
         referencedColumnNames: ['uuid'],
         referencedTableName: 'rewards',
-        onDelete: 'CASCADE',
+        onDelete: 'RESTRICT',
       }),
     );
-    await queryRunner.createPrimaryKey(tableName, ['userUuid', 'rewardUuid']);
+    await queryRunner.createPrimaryKey(tableName, ['user_id', 'reward_uuid']);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

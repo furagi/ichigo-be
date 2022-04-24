@@ -1,10 +1,13 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { UserReward } from './user-reward.model';
 
 @ObjectType()
-export class User {
+export class Reward {
   @Field(() => ID)
   uuid: string;
 
-  rewards: UserReward[];
+  @Field()
+  availableAt?: Date;
+
+  @Field()
+  expiresAt: Date;
 }

@@ -1,15 +1,15 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserReward } from './user-reward.entity';
 
-@Entity()
+@Entity({ name: 'rewards' })
 export class Reward {
   @PrimaryGeneratedColumn()
   uuid: number;
 
-  @Column({ unique: true })
+  @Column({ name: 'available_at', unique: true })
   availableAt: string;
 
-  @Column({ unique: true })
+  @Column({ name: 'expires_at', unique: true })
   expiresAt: string;
 
   @OneToMany(() => UserReward, (userReward) => userReward.reward)
