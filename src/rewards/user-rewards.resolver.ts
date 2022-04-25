@@ -24,7 +24,6 @@ export class UserRewardsResolver {
       userId,
       date,
     );
-    console.log(userRewards);
     return userRewards.map((reward) => ({
       ...pick(reward, ['expiresAt', 'availableAt']),
       redeemedAt: reward.userRewards[0]?.redeemedAt || null,

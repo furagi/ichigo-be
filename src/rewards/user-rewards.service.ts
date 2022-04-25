@@ -35,6 +35,9 @@ export class UserRewardsService {
     }));
     await this.rewardsRepository.upsert(week, ['availableAt']);
 
+    /**
+     * Here I'd like to use right join, but TypeORM doesn't support it
+     */
     return this.rewardsRepository
       .createQueryBuilder('rewards')
       .leftJoinAndSelect(

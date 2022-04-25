@@ -44,6 +44,7 @@ describe('UserRewardsResolver', () => {
   afterEach(async () => {
     jest.clearAllMocks();
     await wipeDb(module, [UserReward, User, Reward]);
+    module.close();
   });
 
   it('should be defined', () => {
