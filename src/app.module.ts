@@ -32,6 +32,5 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     RewardsModule,
   ],
   controllers: [],
-  providers: [],
 })
 export class AppModule {}
