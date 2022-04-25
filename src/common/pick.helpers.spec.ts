@@ -1,4 +1,4 @@
-import { pick } from './pick.helper';
+import { pick } from './pick.helpers';
 
 describe('pick', () => {
   it('should be defined', () => {
