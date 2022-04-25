@@ -1,4 +1,5 @@
 import { Args, ID, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { pick } from '../common/pick.helpers';
 import { UserReward } from './models/user-reward.model';
 import { UserRewardsService } from './user-rewards.service';
 
@@ -16,13 +17,16 @@ export class UserRewardsResolver {
   @Query(() => [UserReward], { name: 'userRewards' })
   async getUserRewards(
     @Args('userId', { type: () => ID }) userId: number,
-    @Args('date', { nullable: true }) date?: Date,
+    @Args('date', { nullable: true }) date: Date,
   ) {
     console.log(`resolve user rewards for user ${userId} and date ${date}`);
-    const userRewards = await this.userRewardsService.getUserRewards(userId);
+    const userRewards = await this.userRewardsService.getUserRewards(
+      userId,
+      date,
+    );
     console.log(userRewards);
     return userRewards.map((reward) => ({
-      ...reward,
+      ...pick(reward, ['expiresAt', 'availableAt']),
       redeemedAt: reward.userRewards[0]?.redeemedAt || null,
     }));
   }

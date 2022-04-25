@@ -9,7 +9,14 @@ import { UserRewardsResolver } from './user-rewards.resolver';
 import { UserRewardsService } from './user-rewards.service';
 import { User } from './user.entity';
 
-describe('UserRewardsService', () => {
+/**
+ * If I cover services and resolvers with unit tests
+ * the result actually will dictate how exactly everything shoul be implented
+ * (because of mocking)
+ * So writing kind of e2e tests for the resolver seems more correct as for me
+ * And yep, it takes less time
+ */
+describe('UserRewardsResolver', () => {
   let resolver: UserRewardsResolver;
   let usersRepository: Repository<User>;
   let rewardsRepository: Repository<Reward>;
@@ -36,7 +43,7 @@ describe('UserRewardsService', () => {
 
   afterEach(async () => {
     jest.clearAllMocks();
-    await wipeDb(module, [User, Reward, UserReward]);
+    await wipeDb(module, [UserReward, User, Reward]);
   });
 
   it('should be defined', () => {
@@ -75,7 +82,7 @@ describe('UserRewardsService', () => {
        * for this date first availableAt is 2020-03-15
        * and last expiresAt is 2020-03-22
        */
-      const date = new Date('2020-03-19T12:00:00Z');
+      const date = new Date('2020-03-19T12:00:00');
       await rewardsRepository.insert([
         { availableAt: '2020-03-15', expiresAt: '2020-03-16' },
         { availableAt: '2020-03-16', expiresAt: '2020-03-17' },
@@ -85,8 +92,8 @@ describe('UserRewardsService', () => {
       const rewards = await rewardsRepository.find();
       expect(rewards.length).toBe(7);
       for (const [i, reward] of rewards.entries()) {
-        expect(reward.availableAt).toBe(`'2020-03-${15 + i}`);
-        expect(reward.expiresAt).toBe(`'2020-03-${15 + i + 1}`);
+        expect(reward.availableAt).toEqual(new Date(`2020-03-${15 + i}`));
+        expect(reward.expiresAt).toEqual(new Date(`2020-03-${15 + i + 1}`));
       }
     });
 
@@ -96,7 +103,7 @@ describe('UserRewardsService', () => {
        * for this date first availableAt is 2020-03-15
        * and last expiresAt is 2020-03-22
        */
-      const date = new Date('2020-03-19T12:00:00Z');
+      const date = new Date('2020-03-19T12:00:00');
       const user = await usersRepository.create({
         id: userId,
         name: `Name_${userId}`,
@@ -125,9 +132,10 @@ describe('UserRewardsService', () => {
        */
       for (let i = 0; i < 7; i++) {
         expected.push({
-          availableAt: `2020-03-${15 + i}T00:00:00Z`,
-          expiresAt: `2020-03-${16 + i}T00:00:00Z`,
-          redeemedAt: i === 0 || i === 2 ? `2020-03-${15 + i}T00:00:08Z` : null,
+          availableAt: new Date(`2020-03-${15 + i}T00:00:00Z`),
+          expiresAt: new Date(`2020-03-${16 + i}T00:00:00Z`),
+          redeemedAt:
+            i === 0 || i === 2 ? new Date(`2020-03-${15 + i}T00:00:08Z`) : null,
         });
       }
       const result = await resolver.getUserRewards(userId, date);

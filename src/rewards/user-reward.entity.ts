@@ -19,5 +19,5 @@ export class UserReward {
   user: User;
 
   @Column({ name: 'redeemed_at' })
-  redeemedAt: string;
+  redeemedAt: Date;
 }

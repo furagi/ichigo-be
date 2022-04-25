@@ -4,13 +4,13 @@ import { UserReward } from './user-reward.entity';
 @Entity({ name: 'rewards' })
 export class Reward {
   @PrimaryGeneratedColumn()
-  uuid: number;
+  uuid: string;
 
   @Column({ name: 'available_at', unique: true })
-  availableAt: string;
+  availableAt: Date;
 
   @Column({ name: 'expires_at', unique: true })
-  expiresAt: string;
+  expiresAt: Date;
 
   @OneToMany(() => UserReward, (userReward) => userReward.reward)
   userRewards: UserReward[];
