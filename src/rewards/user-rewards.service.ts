@@ -49,4 +49,17 @@ export class UserRewardsService {
       .orderBy('rewards.availableAt', 'ASC')
       .getMany();
   }
+
+  async redeemReward(
+    user: User,
+    reward: Reward,
+    redeemedAt: Date,
+  ): Promise<UserReward> {
+    const userReward = this.userRewardsRepository.create({
+      user,
+      reward,
+      redeemedAt,
+    });
+    return await this.userRewardsRepository.save(userReward);
+  }
 }
