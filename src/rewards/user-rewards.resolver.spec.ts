@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { LessThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThan, Repository } from 'typeorm';
 import { DateScalar } from '../common/scalars/date.scalar';
 import { mockTypeOrm, wipeDb } from '../../test/db.helpers';
 import { Reward } from './reward.entity';
@@ -8,7 +8,23 @@ import { UserReward } from './user-reward.entity';
 import { UserRewardsResolver } from './user-rewards.resolver';
 import { UserRewardsService } from './user-rewards.service';
 import { User } from './user.entity';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { RewardsService } from './rewards.service';
+
+async function createTodayReward(rewardsRepository: Repository<Reward>) {
+  const day = 24 * 60 * 60 * 1000;
+  const now = Date.now();
+  const availableAt = new Date(now - (now % day));
+  const expiresAt = new Date(+availableAt + day);
+  const reward = rewardsRepository.create({
+    availableAt,
+    expiresAt,
+  });
+  await rewardsRepository.insert(reward);
+
+  return reward;
+}
 
 /**
  * If I cover services and resolvers with unit tests
@@ -31,7 +47,13 @@ describe('UserRewardsResolver', () => {
     const REWARD_REPOSITORY_TOKEN = getRepositoryToken(Reward);
     module = await Test.createTestingModule({
       imports: [...mockTypeOrm([User, Reward, UserReward])],
-      providers: [UserRewardsService, UserRewardsResolver, DateScalar],
+      providers: [
+        UserRewardsService,
+        UserRewardsResolver,
+        DateScalar,
+        UsersService,
+        RewardsService,
+      ],
     }).compile();
 
     resolver = module.get<UserRewardsResolver>(UserRewardsResolver);
@@ -45,7 +67,7 @@ describe('UserRewardsResolver', () => {
   afterEach(async () => {
     jest.clearAllMocks();
     await wipeDb(module, [UserReward, User, Reward]);
-    module.close();
+    await module.close();
   });
 
   it('should be defined', () => {
@@ -150,23 +172,18 @@ describe('UserRewardsResolver', () => {
       expect(resolver.redeemReward).toBeDefined();
     });
 
-    it(`should throw an Error if passed user doesn't exist`, async () => {
+    it(`should throw NotFound error if passed user doesn't exist`, async () => {
       expect.assertions(1);
       const userId = 5;
-      rewardsRepository.insert(
-        rewardsRepository.create({
-          availableAt: new Date('2020-03-15T00:00:00Z'),
-          expiresAt: new Date('2020-03-16T00:00:00Z'),
-        }),
-      );
+      const { availableAt } = await createTodayReward(rewardsRepository);
       try {
-        await resolver.redeemReward(new Date('2020-03-15T20:00:00Z'), userId);
+        await resolver.redeemReward(availableAt, userId);
       } catch (err) {
         expect(err).toBeInstanceOf(NotFoundException);
       }
     });
 
-    it(`should throw an Error if the reward doesn't exist`, async () => {
+    it(`should throw NotFound error if the reward with the date doesn't exist`, async () => {
       expect.assertions(1);
       const userId = 5;
       const user = usersRepository.create({
@@ -177,36 +194,58 @@ describe('UserRewardsResolver', () => {
       try {
         await resolver.redeemReward(new Date(), 3);
       } catch (err) {
+        console.log(err);
         expect(err).toBeInstanceOf(NotFoundException);
+      }
+    });
+
+    it(`should throw BadRequest error if the reward expiresAt already passed`, async () => {
+      expect.assertions(1);
+      const userId = 5;
+      const user = usersRepository.create({
+        id: userId,
+        name: `Name_${userId}`,
+      });
+      await usersRepository.save(user);
+      const rewardDate = new Date('2020-03-15T00:00:00Z');
+      await rewardsRepository.insert(
+        rewardsRepository.create({
+          availableAt: rewardDate,
+          expiresAt: new Date('2020-03-16T00:00:00Z'),
+        }),
+      );
+      try {
+        await resolver.redeemReward(rewardDate, userId);
+      } catch (err) {
+        expect(err).toBeInstanceOf(BadRequestException);
       }
     });
 
     it(`otherwise it should redeem the reward`, async () => {
       const userId = 5;
-      rewardsRepository.insert(
-        rewardsRepository.create({
-          availableAt: new Date('2020-03-15T00:00:00Z'),
-          expiresAt: new Date('2020-03-16T00:00:00Z'),
-        }),
+      const { availableAt, expiresAt } = await createTodayReward(
+        rewardsRepository,
       );
       const user = usersRepository.create({
         id: userId,
         name: `Name_${userId}`,
       });
       await usersRepository.save(user);
-      const date = new Date('2020-03-15T20:00:00Z');
-      const now = new Date();
-      await resolver.redeemReward(date, userId);
+      const redeemedAt = new Date();
+      const result = await resolver.redeemReward(availableAt, userId);
       const reward = await userRewardsRepository.findOneBy({
         user: {
           id: userId,
         },
         reward: {
-          expiresAt: LessThan(date),
-          availableAt: MoreThanOrEqual(date),
+          expiresAt: MoreThan(redeemedAt),
+          availableAt: LessThanOrEqual(redeemedAt),
         },
       });
-      expect(reward?.redeemedAt).toEqual(now);
+      expect(reward?.redeemedAt).toEqual(redeemedAt);
+      expect(result.redeemedAt).toEqual(redeemedAt);
+      expect(result.expiresAt).toEqual(expiresAt);
+      expect(result.availableAt).toEqual(availableAt);
     });
   });
 });
