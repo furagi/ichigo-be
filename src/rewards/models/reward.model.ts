@@ -6,7 +6,7 @@ export class Reward {
   uuid: string;
 
   @Field()
-  availableAt?: Date;
+  availableAt: Date;
 
   @Field()
   expiresAt: Date;
