@@ -15,4 +15,7 @@ export const AppDataSource = new DataSource({
   database: DB_NAME,
   url: DATABASE_URL,
   migrations: ['src/db/migrations/*.ts'],
+  extra: {
+    ssl: true,
+  },
 });
