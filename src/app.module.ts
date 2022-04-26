@@ -26,6 +26,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         url: configService.get('DATABASE_URL'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
+        extra: {
+          ssl: true,
+        },
       }),
       inject: [ConfigService],
     }),
