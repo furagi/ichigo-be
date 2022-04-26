@@ -24,7 +24,7 @@ export const AppDataSource = new DataSource({
   migrations: ['src/db/migrations/*.ts'],
   // to be able to connect to Heroku DB
   extra: {
-    ssl: true,
+    ssl: NODE_ENV === 'production',
   },
   logging: NODE_ENV !== 'production',
 });

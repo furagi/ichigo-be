@@ -2,9 +2,47 @@
   "name": "ichigo-be",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:furagi/ichigo-be.git"
+  },
+  "author": "furagi.usagi@gmail.com",
   "private": true,
   "license": "UNLICENSED",
+  "env": {
+    "NODE_ENV": {
+      "description": "The environment can be: production or development",
+      "value": "development"
+    },
+    "DATABASE_URL": {
+      "description": "The URI to the DB, has higher priority than the other DB env variables",
+      "value": "postgres://USER_NAME:PASSWORD@example.com:5432/DB_NAME"
+    },
+    "PORT": {
+      "description": "Set the port for server",
+      "value": 3000
+    },
+    "DB_HOST": {
+      "description": "Host of the DB",
+      "valie": "127.0.0.1"
+    },
+    "DB_PORT": {
+      "description": "DB port",
+      "valie": 5432
+    },
+    "DB_USERNAME": {
+      "description": "DB username",
+      "valie": "username"
+    },
+    "DB_PASSWORD": {
+      "description": "DB password",
+      "valie": "password"
+    },
+    "DB_NAME": {
+      "description": "DB name",
+      "valie": "ichigo"
+    }
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
