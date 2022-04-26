@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { LessThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { DateScalar } from '../common/scalars/date.scalar';
 import { mockTypeOrm, wipeDb } from '../../test/db.helpers';
 import { Reward } from './reward.entity';
@@ -8,6 +8,7 @@ import { UserReward } from './user-reward.entity';
 import { UserRewardsResolver } from './user-rewards.resolver';
 import { UserRewardsService } from './user-rewards.service';
 import { User } from './user.entity';
+import { NotFoundException } from '@nestjs/common';
 
 /**
  * If I cover services and resolvers with unit tests
@@ -141,6 +142,71 @@ describe('UserRewardsResolver', () => {
       }
       const result = await resolver.getUserRewards(userId, date);
       expect(result).toEqual(expected);
+    });
+  });
+
+  describe('#redeemReward(date, userId)', () => {
+    it('should be defined', () => {
+      expect(resolver.redeemReward).toBeDefined();
+    });
+
+    it(`should throw an Error if passed user doesn't exist`, async () => {
+      expect.assertions(1);
+      const userId = 5;
+      rewardsRepository.insert(
+        rewardsRepository.create({
+          availableAt: new Date('2020-03-15T00:00:00Z'),
+          expiresAt: new Date('2020-03-16T00:00:00Z'),
+        }),
+      );
+      try {
+        await resolver.redeemReward(new Date('2020-03-15T20:00:00Z'), userId);
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotFoundException);
+      }
+    });
+
+    it(`should throw an Error if the reward doesn't exist`, async () => {
+      expect.assertions(1);
+      const userId = 5;
+      const user = usersRepository.create({
+        id: userId,
+        name: `Name_${userId}`,
+      });
+      await usersRepository.save(user);
+      try {
+        await resolver.redeemReward(new Date(), 3);
+      } catch (err) {
+        expect(err).toBeInstanceOf(NotFoundException);
+      }
+    });
+
+    it(`otherwise it should redeem the reward`, async () => {
+      const userId = 5;
+      rewardsRepository.insert(
+        rewardsRepository.create({
+          availableAt: new Date('2020-03-15T00:00:00Z'),
+          expiresAt: new Date('2020-03-16T00:00:00Z'),
+        }),
+      );
+      const user = usersRepository.create({
+        id: userId,
+        name: `Name_${userId}`,
+      });
+      await usersRepository.save(user);
+      const date = new Date('2020-03-15T20:00:00Z');
+      const now = new Date();
+      await resolver.redeemReward(date, userId);
+      const reward = await userRewardsRepository.findOneBy({
+        user: {
+          id: userId,
+        },
+        reward: {
+          expiresAt: LessThan(date),
+          availableAt: MoreThanOrEqual(date),
+        },
+      });
+      expect(reward?.redeemedAt).toEqual(now);
     });
   });
 });
