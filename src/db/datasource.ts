@@ -3,8 +3,15 @@ import { DataSource } from 'typeorm';
 
 dotenv.config();
 
-const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DATABASE_URL } =
-  process.env;
+const {
+  DB_HOST,
+  DB_PORT,
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_NAME,
+  DATABASE_URL,
+  NODE_ENV,
+} = process.env;
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -15,7 +22,9 @@ export const AppDataSource = new DataSource({
   database: DB_NAME,
   url: DATABASE_URL,
   migrations: ['src/db/migrations/*.ts'],
+  // to be able to connect to Heroku DB
   extra: {
     ssl: true,
   },
+  logging: NODE_ENV !== 'production',
 });
