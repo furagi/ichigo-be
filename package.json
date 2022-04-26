@@ -23,6 +23,7 @@
     "migration:generate": "npm run typeorm migration:generate",
     "migration:create": "npm run typeorm migration:create",
     "migration:run": "npm run typeorm migration:run -- -d ./src/db/datasource.ts",
+    "migration:run-heroku": "ts-node src/db/migrations-runner.ts",
     "migration:revert": "npm run typeorm migration:revert -- -d ./src/db/datasource.ts"
   },
   "dependencies": {
