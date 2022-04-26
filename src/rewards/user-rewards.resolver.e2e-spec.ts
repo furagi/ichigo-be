@@ -194,7 +194,6 @@ describe('UserRewardsResolver', () => {
       try {
         await resolver.redeemReward(new Date(), 3);
       } catch (err) {
-        console.log(err);
         expect(err).toBeInstanceOf(NotFoundException);
       }
     });

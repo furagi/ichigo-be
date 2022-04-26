@@ -26,7 +26,6 @@ export class UserRewardsResolver {
     @Args('userId', { type: () => ID }) userId: number,
     @Args('date', { nullable: true }) date: Date,
   ) {
-    console.log(`resolve user rewards for user ${userId} and date ${date}`);
     const userRewards = await this.userRewardsService.getUserRewards(
       userId,
       date,

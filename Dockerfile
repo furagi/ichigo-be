@@ -15,5 +15,4 @@ RUN npm run test:e2e && npm run test
 
 FROM base as production
 COPY tsconfig.build.json ./
-EXPOSE 4040
 CMD npm run build && npm run start:prod
