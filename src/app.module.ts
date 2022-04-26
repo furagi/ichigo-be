@@ -12,6 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      introspection: true,
     }),
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync({
