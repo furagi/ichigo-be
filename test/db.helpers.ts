@@ -10,7 +10,6 @@ export const mockTypeOrm = (entities: EntityClassOrSchema[]) => [
     dropSchema: true,
     synchronize: true,
     entities: entities,
-    logging: true,
   }),
   TypeOrmModule.forFeature(entities),
 ];

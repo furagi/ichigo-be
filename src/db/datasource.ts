@@ -3,7 +3,8 @@ import { DataSource } from 'typeorm';
 
 dotenv.config();
 
-const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } = process.env;
+const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME, DATABASE_URL } =
+  process.env;
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
@@ -12,5 +13,6 @@ export const AppDataSource = new DataSource({
   username: DB_USERNAME,
   password: DB_PASSWORD,
   database: DB_NAME,
+  url: DATABASE_URL,
   migrations: ['src/db/migrations/*.ts'],
 });
